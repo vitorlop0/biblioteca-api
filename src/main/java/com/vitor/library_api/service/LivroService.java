@@ -3,9 +3,9 @@ package com.vitor.library_api.service;
 import com.vitor.library_api.model.Livro;
 import com.vitor.library_api.repository.LivroRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class LivroService {
@@ -18,6 +18,11 @@ public class LivroService {
 
     public List<Livro> listarLivros() {
         return livroRepository.findAll();
+    }
+
+    public Livro buscarLivroPorId(Long id) {
+        return livroRepository.findById(id)
+                .orElseThrow();
     }
 
     public Livro cadastrarLivro(Livro livro) {
