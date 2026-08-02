@@ -1,5 +1,6 @@
 package com.vitor.library_api.service;
 
+import com.vitor.library_api.exceptions.LivroNotFoundExpection;
 import com.vitor.library_api.model.Livro;
 import com.vitor.library_api.repository.LivroRepository;
 import org.springframework.stereotype.Service;
@@ -22,7 +23,8 @@ public class LivroService {
 
     public Livro buscarLivroPorId(Long id) {
         return livroRepository.findById(id)
-                .orElseThrow();
+                .orElseThrow(() ->
+                        new LivroNotFoundExpection("Livro não encontrado"));
     }
 
     public Livro cadastrarLivro(Livro livro) {
