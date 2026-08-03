@@ -1,8 +1,8 @@
 package com.vitor.library_api.exceptions;
 
-public class LivroNotFoundExpection extends RuntimeException {
+public class LivroNotFoundException extends RuntimeException {
 
-    public LivroNotFoundExpection(String mensagem) {
+    public LivroNotFoundException(String mensagem) {
         super(mensagem);
     }
 }

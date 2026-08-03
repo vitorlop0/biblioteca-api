@@ -1,6 +1,8 @@
 package com.vitor.library_api.controller;
 
 import com.vitor.library_api.model.Livro;
+import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.vitor.library_api.service.LivroService;
 
@@ -28,7 +30,7 @@ public class LivroController {
     }
 
     @PostMapping
-    public Livro cadastrarLivro(@RequestBody Livro livro) {
-       return livroService.cadastrarLivro(livro);
+    public ResponseEntity<Livro> cadastrarLivro(@Valid @RequestBody Livro livro) {
+       return ResponseEntity.ok(livroService.cadastrarLivro(livro));
     }
 }
