@@ -33,4 +33,12 @@ public class LivroController {
     public ResponseEntity<Livro> cadastrarLivro(@Valid @RequestBody Livro livro) {
        return ResponseEntity.ok(livroService.cadastrarLivro(livro));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletarLivroPorId(@PathVariable Long id) {
+        livroService.deletarLivro(id);
+        return ResponseEntity.noContent().build();
+    }
+
+
 }

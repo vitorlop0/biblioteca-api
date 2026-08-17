@@ -30,5 +30,13 @@ public class LivroService {
         return livroRepository.save(livro);
     }
 
+    public void deletarLivro(Long id) {
+       if (livroRepository.existsById(id)) {
+           livroRepository.deleteById(id);
+        } else {
+           throw new LivroNotFoundException("Livro não encontrado");
+       }
+    }
+
 
 }
