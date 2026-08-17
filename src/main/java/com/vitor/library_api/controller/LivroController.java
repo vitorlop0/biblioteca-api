@@ -40,5 +40,10 @@ public class LivroController {
         return ResponseEntity.noContent().build();
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<Livro> atualizarLivroPorId(@Valid @RequestBody Livro livro, @PathVariable Long id) {
+        return ResponseEntity.ok(livroService.atualizarLivroPorId(livro, id));
+    }
+
 
 }

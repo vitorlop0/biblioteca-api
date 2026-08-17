@@ -4,6 +4,7 @@ import com.vitor.library_api.exceptions.LivroNotFoundException;
 import com.vitor.library_api.model.Livro;
 import com.vitor.library_api.repository.LivroRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
@@ -36,6 +37,18 @@ public class LivroService {
         } else {
            throw new LivroNotFoundException("Livro não encontrado");
        }
+    }
+
+    public Livro atualizarLivroPorId(Livro livro, @PathVariable Long id) {
+        Livro livroExistente = livroRepository.findById(id)
+               .orElseThrow(() -> new LivroNotFoundException("Livro não encontrado"));
+
+        livroExistente.setTitulo(livro.getTitulo());
+        livroExistente.setAutor(livro.getAutor());
+        livroExistente.setAnoPublicacao(livro.getAnoPublicacao());
+        livroExistente.setDisponivel(livro.getDisponivel());
+
+        return livroRepository.save(livroExistente);
     }
 
 
