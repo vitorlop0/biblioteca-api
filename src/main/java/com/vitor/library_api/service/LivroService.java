@@ -1,10 +1,11 @@
 package com.vitor.library_api.service;
 
+import com.vitor.library_api.dto.LivroRequest;
+import com.vitor.library_api.dto.LivroResponse;
 import com.vitor.library_api.exceptions.LivroNotFoundException;
 import com.vitor.library_api.model.Livro;
 import com.vitor.library_api.repository.LivroRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
@@ -17,18 +18,46 @@ public class LivroService {
         this.livroRepository = livroRepository;
     }
 
-    public List<Livro> listarLivros() {
-        return livroRepository.findAll();
+    public List<LivroResponse> listarLivros() {
+        return livroRepository.findAll()
+                .stream()
+                .map(livro -> new LivroResponse(
+                        livro.getId(),
+                        livro.getTitulo(),
+                        livro.getAutor(),
+                        livro.getAnoPublicacao(),
+                        livro.getDisponivel()
+                ))
+                .toList();
     }
 
-    public Livro buscarLivroPorId(Long id) {
-        return livroRepository.findById(id)
+    public LivroResponse buscarLivroPorId(Long id) {
+         Livro livro = livroRepository.findById(id)
                 .orElseThrow(() ->
                         new LivroNotFoundException("Livro não encontrado"));
+         return new LivroResponse(
+                 livro.getId(),
+                 livro.getTitulo(),
+                 livro.getAutor(),
+                 livro.getAnoPublicacao(),
+                 livro.getDisponivel()
+         );
     }
 
-    public Livro cadastrarLivro(Livro livro) {
-        return livroRepository.save(livro);
+    public LivroResponse cadastrarLivro(LivroRequest livro) {
+        Livro novoLivro = new Livro();
+        novoLivro.setAutor(livro.autor());
+        novoLivro.setTitulo(livro.titulo());
+        novoLivro.setAnoPublicacao(livro.anoPublicacao());
+        Livro livroSalvo = livroRepository.save(novoLivro);
+
+        return new LivroResponse(
+                livroSalvo.getId(),
+                livroSalvo.getTitulo(),
+                livroSalvo.getAutor(),
+                livroSalvo.getAnoPublicacao(),
+                livroSalvo.getDisponivel()
+        );
     }
 
     public void deletarLivro(Long id) {
@@ -39,16 +68,22 @@ public class LivroService {
        }
     }
 
-    public Livro atualizarLivroPorId(Livro livro, @PathVariable Long id) {
+    public LivroResponse atualizarLivroPorId(LivroRequest livro, Long id) {
         Livro livroExistente = livroRepository.findById(id)
                .orElseThrow(() -> new LivroNotFoundException("Livro não encontrado"));
 
-        livroExistente.setTitulo(livro.getTitulo());
-        livroExistente.setAutor(livro.getAutor());
-        livroExistente.setAnoPublicacao(livro.getAnoPublicacao());
-        livroExistente.setDisponivel(livro.getDisponivel());
+        livroExistente.setTitulo(livro.titulo());
+        livroExistente.setAutor(livro.autor());
+        livroExistente.setAnoPublicacao(livro.anoPublicacao());
+        Livro livroSalvo = livroRepository.save(livroExistente);
 
-        return livroRepository.save(livroExistente);
+        return new LivroResponse(
+                livroSalvo.getId(),
+                livroSalvo.getTitulo(),
+                livroSalvo.getAutor(),
+                livroSalvo.getAnoPublicacao(),
+                livroSalvo.getDisponivel()
+        );
     }
 
 

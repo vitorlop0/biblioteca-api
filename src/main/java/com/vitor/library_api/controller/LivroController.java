@@ -1,13 +1,13 @@
 package com.vitor.library_api.controller;
 
-import com.vitor.library_api.model.Livro;
+import com.vitor.library_api.dto.LivroRequest;
+import com.vitor.library_api.dto.LivroResponse;
+import com.vitor.library_api.service.LivroService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.vitor.library_api.service.LivroService;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/livros")
@@ -20,17 +20,17 @@ public class LivroController {
     }
 
     @GetMapping
-    public List<Livro> listarLivros() {
+    public List<LivroResponse> listarLivros() {
         return livroService.listarLivros();
     }
 
     @GetMapping("/{id}")
-    public Livro listarLivrosPorId(@PathVariable Long id) {
+    public LivroResponse listarLivrosPorId(@PathVariable Long id) {
        return livroService.buscarLivroPorId(id);
     }
 
     @PostMapping
-    public ResponseEntity<Livro> cadastrarLivro(@Valid @RequestBody Livro livro) {
+    public ResponseEntity<LivroResponse> cadastrarLivro(@Valid @RequestBody LivroRequest livro) {
        return ResponseEntity.ok(livroService.cadastrarLivro(livro));
     }
 
@@ -41,7 +41,7 @@ public class LivroController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Livro> atualizarLivroPorId(@Valid @RequestBody Livro livro, @PathVariable Long id) {
+    public ResponseEntity<LivroResponse> atualizarLivroPorId(@Valid @RequestBody LivroRequest livro, @PathVariable Long id) {
         return ResponseEntity.ok(livroService.atualizarLivroPorId(livro, id));
     }
 
