@@ -26,12 +26,12 @@ public class LivroController {
 
     @GetMapping("/{id}")
     public LivroResponse listarLivrosPorId(@PathVariable Long id) {
-       return livroService.buscarLivroPorId(id);
+        return livroService.buscarLivroPorId(id);
     }
 
     @PostMapping
     public ResponseEntity<LivroResponse> cadastrarLivro(@Valid @RequestBody LivroRequest livro) {
-       return ResponseEntity.ok(livroService.cadastrarLivro(livro));
+        return ResponseEntity.ok(livroService.cadastrarLivro(livro));
     }
 
     @DeleteMapping("/{id}")
