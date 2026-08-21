@@ -34,4 +34,16 @@ public class GlobalExceptionHandler {
 
     }
 
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleGeneral(Exception ex) {
+
+        ErrorResponse errorResponse = new ErrorResponse("Erro interno do servidor", HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                LocalDateTime.now());
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(errorResponse);
+
+    }
+
+
 }
