@@ -3,6 +3,7 @@ package com.vitor.library_api.service;
 import com.vitor.library_api.dto.LivroRequest;
 import com.vitor.library_api.dto.LivroResponse;
 import com.vitor.library_api.exceptions.LivroNotFoundException;
+import com.vitor.library_api.exceptions.LivroOperacaoInvalidaException;
 import com.vitor.library_api.model.Livro;
 import com.vitor.library_api.repository.LivroRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -160,6 +161,78 @@ public class LivroServiceTest {
         assertThrows(LivroNotFoundException.class, () -> livroService.deletarLivro(1L));
 
         verify(livroRepository, never()).deleteById(any());
+    }
+
+    @Test
+    void deveEmprestarLivro() {
+        Livro livroDisponivel = new Livro();
+        livroDisponivel.setId(1L);
+        livroDisponivel.setTitulo("Dom Casmurro");
+        livroDisponivel.setAutor("Machado de Assis");
+        livroDisponivel.setDisponivel(true);
+
+        when(livroRepository.findById(1L)).thenReturn(Optional.of(livroDisponivel));
+        when(livroRepository.save(any(Livro.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        LivroResponse resultado = livroService.emprestarLivro(1L);
+
+        assertFalse(resultado.disponivel());
+    }
+
+    @Test
+    void deveLancarExcecaoAoEmprestarLivroJaEmprestado() {
+        Livro livroIndisponivel = new Livro();
+        livroIndisponivel.setId(1L);
+        livroIndisponivel.setDisponivel(false);
+
+        when(livroRepository.findById(1L)).thenReturn(Optional.of(livroIndisponivel));
+
+        assertThrows(LivroOperacaoInvalidaException.class, () -> livroService.emprestarLivro(1L));
+
+        verify(livroRepository, never()).save(any(Livro.class));
+    }
+
+    @Test
+    void deveLancarExcecaoAoEmprestarLivroInexistente() {
+        when(livroRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(LivroNotFoundException.class, () -> livroService.emprestarLivro(1L));
+    }
+
+    @Test
+    void deveDevolverLivro() {
+        Livro livroEmprestado = new Livro();
+        livroEmprestado.setId(1L);
+        livroEmprestado.setTitulo("Dom Casmurro");
+        livroEmprestado.setAutor("Machado de Assis");
+        livroEmprestado.setDisponivel(false);
+
+        when(livroRepository.findById(1L)).thenReturn(Optional.of(livroEmprestado));
+        when(livroRepository.save(any(Livro.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        LivroResponse resultado = livroService.devolverLivro(1L);
+
+        assertTrue(resultado.disponivel());
+    }
+
+    @Test
+    void deveLancarExcecaoAoDevolverLivroJaDisponivel() {
+        Livro livroDisponivel = new Livro();
+        livroDisponivel.setId(1L);
+        livroDisponivel.setDisponivel(true);
+
+        when(livroRepository.findById(1L)).thenReturn(Optional.of(livroDisponivel));
+
+        assertThrows(LivroOperacaoInvalidaException.class, () -> livroService.devolverLivro(1L));
+
+        verify(livroRepository, never()).save(any(Livro.class));
+    }
+
+    @Test
+    void deveLancarExcecaoAoDevolverLivroInexistente() {
+        when(livroRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(LivroNotFoundException.class, () -> livroService.devolverLivro(1L));
     }
 
 }
