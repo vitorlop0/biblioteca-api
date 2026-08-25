@@ -36,6 +36,8 @@ exceptions/   -> exceções de negócio e tratamento global de erros
 | POST   | `/livros`     | Cadastra um novo livro         | `LivroRequest`  |
 | PUT    | `/livros/{id}`| Atualiza um livro existente    | `LivroRequest`  |
 | DELETE | `/livros/{id}`| Remove um livro                | -               |
+| POST   | `/livros/{id}/emprestar` | Marca o livro como emprestado | -   |
+| POST   | `/livros/{id}/devolver`  | Marca o livro como devolvido  | -   |
 
 **LivroRequest** (entrada):
 ```json
@@ -71,6 +73,7 @@ Todos os erros retornam um corpo padronizado, em vez de mensagens soltas ou stac
 
 - `404` quando o livro não existe
 - `400` quando a validação dos campos falha (ex: título ou autor em branco)
+- `409` quando a operação de empréstimo/devolução é inválida para o estado atual do livro (ex: emprestar um livro já emprestado, ou devolver um que já está disponível)
 - `500` como fallback genérico para qualquer exceção não tratada, sem vazar detalhes internos
 
 ## Documentação interativa (Swagger)
@@ -88,7 +91,8 @@ Pontos de atenção que fui aplicando conscientemente à medida que o projeto ev
 - **Mapper centralizado** — a conversão `Livro -> LivroResponse` vive em um único lugar (`LivroMapper`), eliminando duplicação que existia antes em cada método do service.
 - **Tratamento global de exceções** — `@RestControllerAdvice` centraliza as respostas de erro, incluindo um handler genérico que evita expor stack traces ao cliente.
 - **Validação de entrada** — Bean Validation (`@NotBlank`) com mensagens de erro específicas por campo.
-- **Testes unitários com Mockito** — o `LivroService` é testado isoladamente (sem banco), cobrindo cadastro, busca, listagem, atualização e remoção, incluindo os caminhos de erro (`LivroNotFoundException`) e a verificação do objeto realmente enviado ao repositório.
+- **Regra de negócio de empréstimo/devolução** — o campo `disponivel` não é só um dado estático: os endpoints de emprestar/devolver controlam essa transição de estado e rejeitam operações inválidas (ex: emprestar um livro que já está emprestado) com `409 Conflict`.
+- **Testes unitários e de controller** — o `LivroService` é testado isoladamente com Mockito (cadastro, busca, listagem, atualização, remoção e empréstimo/devolução, incluindo caminhos de erro), e o `LivroController` tem testes com `MockMvc` cobrindo os status HTTP de cada cenário (200, 400, 404, 409).
 - **Configuração sem credenciais hardcoded** — usuário e senha do banco vêm de variáveis de ambiente (`DB_USERNAME`, `DB_PASSWORD`).
 - **API autodocumentada com Swagger/OpenAPI** — cada endpoint é anotado (`@Tag`/`@Operation`), permitindo explorar e testar a API direto pelo navegador, sem depender de coleções externas (ex: Postman).
 
