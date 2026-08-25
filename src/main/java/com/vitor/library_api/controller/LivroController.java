@@ -53,5 +53,21 @@ public class LivroController {
         return ResponseEntity.ok(livroService.atualizarLivroPorId(livro, id));
     }
 
+    @Operation(summary = "Empresta um livro")
+    @PostMapping("/{id}/emprestar")
+    public ResponseEntity<LivroResponse> emprestarLivroPorId( @PathVariable Long id) {
+
+        return ResponseEntity.ok(livroService.emprestarLivro(id));
+
+    }
+
+    @Operation(summary = "Devolve um livro que foi emprestado")
+    @PostMapping("/{id}/devolver")
+    public ResponseEntity<LivroResponse> devolverLivroPorId(@PathVariable Long id) {
+
+        return ResponseEntity.ok(livroService.devolverLivro(id));
+
+    }
+
 
 }
