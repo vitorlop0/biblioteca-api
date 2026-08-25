@@ -11,6 +11,7 @@ API REST para gerenciamento de acervo de livros (cadastro, consulta, atualizaç�
 - Gradle
 - JUnit 5 + Mockito (testes)
 - Lombok
+- Swagger / OpenAPI (springdoc-openapi)
 
 ## Arquitetura
 
@@ -72,6 +73,13 @@ Todos os erros retornam um corpo padronizado, em vez de mensagens soltas ou stac
 - `400` quando a validação dos campos falha (ex: título ou autor em branco)
 - `500` como fallback genérico para qualquer exceção não tratada, sem vazar detalhes internos
 
+## Documentação interativa (Swagger)
+
+Com a aplicação rodando, a documentação de todos os endpoints fica disponível em:
+
+- Swagger UI: `http://localhost:8080/swagger-ui.html`
+- OpenAPI JSON: `http://localhost:8080/v3/api-docs`
+
 ## O que diferencia este projeto
 
 Pontos de atenção que fui aplicando conscientemente à medida que o projeto evoluiu:
@@ -82,6 +90,7 @@ Pontos de atenção que fui aplicando conscientemente à medida que o projeto ev
 - **Validação de entrada** — Bean Validation (`@NotBlank`) com mensagens de erro específicas por campo.
 - **Testes unitários com Mockito** — o `LivroService` é testado isoladamente (sem banco), cobrindo cadastro, busca, listagem, atualização e remoção, incluindo os caminhos de erro (`LivroNotFoundException`) e a verificação do objeto realmente enviado ao repositório.
 - **Configuração sem credenciais hardcoded** — usuário e senha do banco vêm de variáveis de ambiente (`DB_USERNAME`, `DB_PASSWORD`).
+- **API autodocumentada com Swagger/OpenAPI** — cada endpoint é anotado (`@Tag`/`@Operation`), permitindo explorar e testar a API direto pelo navegador, sem depender de coleções externas (ex: Postman).
 
 ## Como rodar localmente
 
