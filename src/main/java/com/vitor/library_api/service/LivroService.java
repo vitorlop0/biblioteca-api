@@ -3,6 +3,7 @@ package com.vitor.library_api.service;
 import com.vitor.library_api.dto.LivroRequest;
 import com.vitor.library_api.dto.LivroResponse;
 import com.vitor.library_api.exceptions.LivroNotFoundException;
+import com.vitor.library_api.exceptions.LivroOperacaoInvalidaException;
 import com.vitor.library_api.mapper.LivroMapper;
 import com.vitor.library_api.model.Livro;
 import com.vitor.library_api.repository.LivroRepository;
@@ -62,6 +63,42 @@ public class LivroService {
         Livro livroSalvo = livroRepository.save(livroExistente);
 
         return LivroMapper.toResponse(livroSalvo);
+    }
+
+    public LivroResponse emprestarLivro(Long id) {
+
+        Livro livroEmprestado = livroRepository.findById(id)
+                .orElseThrow( () -> new LivroNotFoundException("Livro não encontrado"));
+
+        if (!livroEmprestado.getDisponivel()) {
+            throw new LivroOperacaoInvalidaException("Livro já está emprestado");
+        }
+
+        livroEmprestado.setDisponivel(false);
+       Livro livroSalvo = livroRepository.save(livroEmprestado);
+
+        return LivroMapper.toResponse(livroSalvo);
+
+
+
+    }
+
+    public LivroResponse devolverLivro(long id) {
+
+        Livro livroDevolvido = livroRepository.findById(id)
+                .orElseThrow(() -> new LivroNotFoundException("Livro não encontrado"));
+
+        if (livroDevolvido.getDisponivel()) {
+            throw new LivroOperacaoInvalidaException("Livro já está disponível");
+        }
+
+        livroDevolvido.setDisponivel(true);
+
+        Livro livroSalvo = livroRepository.save(livroDevolvido);
+
+        return LivroMapper.toResponse(livroSalvo);
+
+
     }
 
 

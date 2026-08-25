@@ -45,5 +45,12 @@ public class GlobalExceptionHandler {
 
     }
 
+    @ExceptionHandler (LivroOperacaoInvalidaException.class)
+    public ResponseEntity<ErrorResponse> handleLivroOperacaoInvalida(LivroOperacaoInvalidaException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(ex.getMessage(), HttpStatus.CONFLICT.value(), LocalDateTime.now());
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+    }
+
 
 }
